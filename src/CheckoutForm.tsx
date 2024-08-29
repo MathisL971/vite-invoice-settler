@@ -1,24 +1,27 @@
-import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
-import { useState } from 'react';
+import {
+  PaymentElement,
+  useElements,
+  useStripe,
+} from "@stripe/react-stripe-js";
+import { useState } from "react";
+import { updateInvoice } from "./services/invoice";
 
 type CheckoutFormProps = {
   invoice: any;
   setInvoice: (invoice: any) => void;
-}
+};
 
 const CheckoutForm = (props: CheckoutFormProps) => {
   const { invoice, setInvoice } = props;
 
   const [loading, setLoading] = useState(false);
   const url = new URL(window.location.href);
-  const lang = url.searchParams.get('lang') ?? 'fr';
+  const lang = url.searchParams.get("lang") ?? "fr";
 
   const stripe = useStripe();
   const elements = useElements();
 
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     // We don't want to let default form submission happen here,
     // which would refresh the page.
     event.preventDefault();
@@ -43,25 +46,18 @@ const CheckoutForm = (props: CheckoutFormProps) => {
     } else {
       // Your customer will be redirected to your `return_url`. For some payment
       // methods like iDEAL, your customer will be redirected to an intermediate
-      // site first to authorize the payment, then redirected to the `return_url`.      
-      await fetch('http://localhost:5000/api/invoices/' + invoice.InvoiceID, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          Balance: invoice.Balance - result.paymentIntent.amount < 0
-            ? 0
-            : invoice.Balance - result.paymentIntent.amount,
-        }),
-      })
+      // site first to authorize the payment, then redirected to the `return_url`.
+      const newBalance =
+        invoice.Balance - result.paymentIntent.amount < 0
+          ? 0
+          : invoice.Balance - result.paymentIntent.amount;
+      await updateInvoice(invoice.InvoiceID, {
+        Balance: newBalance,
+      });
       setInvoice((prevInvoice: any) => ({
         ...prevInvoice,
-        Balance: prevInvoice.Balance - result.paymentIntent.amount < 0
-          ? 0
-          : prevInvoice.Balance - result.paymentIntent.amount,
+        Balance: newBalance,
       }));
-
     }
     setLoading(false);
   };
@@ -69,27 +65,29 @@ const CheckoutForm = (props: CheckoutFormProps) => {
   return (
     <form
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-        gap: '1rem',
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        gap: "1rem",
       }}
       onSubmit={handleSubmit}
     >
       <PaymentElement />
       <button
         type="submit"
-        className='bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded'
+        className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded"
         disabled={loading || !stripe}
       >
-        {
-          loading
-            ? (lang === 'fr' ? 'Chargement...' : 'Loading...')
-            : (lang === 'fr' ? 'Payer' : 'Pay')
-        }
+        {loading
+          ? lang === "fr"
+            ? "Chargement..."
+            : "Loading..."
+          : lang === "fr"
+            ? "Payer"
+            : "Pay"}
       </button>
     </form>
-  )
-}
+  );
+};
 
-export default CheckoutForm
+export default CheckoutForm;
