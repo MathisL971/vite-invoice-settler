@@ -1,4 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  //  Link 
+}
+  from "@tanstack/react-router";
 
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe, PaymentIntent } from "@stripe/stripe-js";
@@ -87,7 +91,7 @@ function Invoice() {
 
   return (
     <div className="flex flex-col w-full flex-grow sm:w-3/4 md:w-2/3 lg:w-1/2 mx-auto items-start gap-8">
-      <Link
+      {/* <Link
         to="/"
         from="/invoices/$invoiceId"
         className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 text-xs px-4 rounded flex flex-row justify-between items-center gap-2"
@@ -107,8 +111,8 @@ function Invoice() {
           />
         </svg>
         {lang === "fr" ? "Retour à la page d'accueil" : "Back to home"}
-      </Link>
-      <div className="flex flex-col gap-8 mt-40">
+      </Link> */}
+      <div className="flex flex-col gap-8 mt-32 w-full">
         <div className="flex flex-col gap-3">
           <h1 className="text-5xl font-bold text-slate-700">
             {lang === "fr" ? "Facture " : "Invoice "}
