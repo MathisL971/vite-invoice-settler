@@ -6,27 +6,16 @@ const SuccessAlert = () => {
 
   return (
     <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "1rem",
-        backgroundColor: "lightgreen",
-        borderRadius: "10px",
-        padding: "1rem 2rem",
-        fontWeight: "bold",
-        textAlign: "center",
-        color: "darkgreen",
-        width: "fit-content",
-      }}
+      className="bg-emerald-300 flex-grow w-full text-center font-bold p-4 rounded-md gap-2 flex flex-col"
     >
-      <h2>
+      <p className="text-emerald-900 text-sm sm:text-base md:text-lg lg:text-xl font-bold">
         {lang === "fr"
           ? "Votre paiement a été effectué avec succès "
           : "Your payment has been successfully processed "}
         <span role="img" aria-label="money">
           💸
         </span>
-      </h2>
+      </p>
     </div>
   );
 };

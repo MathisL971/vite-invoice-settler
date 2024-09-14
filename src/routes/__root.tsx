@@ -20,7 +20,7 @@ function App() {
     >
       <div className="flex flex-col min-h-screen">
         <nav className="flex flex-row justify-between items-center bg-gray-800 text-slate-200 font-bold py-5 px-10">
-          <h1 className="text-2xl">MSM Facturation</h1>
+          <h6 className="text-white">MSM Payments</h6>
           <Button.Group className="">
             <Button
               onClick={() => setLang("fr")}

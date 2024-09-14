@@ -26,7 +26,7 @@ export const Route = createFileRoute("/invoices/$invoiceId")({
   loader: async ({ params: { invoiceId } }) => {
     const invoice = await fetchInvoice(invoiceId);
     if (!invoice) {
-      throw new Error("Facture " + invoiceId + " introuvable");
+      throw new Error("Facture " + invoiceId + " introuvable. Veuillez vérifier le numéro de facture et réessayer. Si le problème persiste, veuillez contacter le service client.");
     }
     return invoice;
   },
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/invoices/$invoiceId")({
   errorComponent: ({ error }) => {
     return (
       <div className="flex flex-col w-full flex-grow sm:w-3/4 md:w-2/3 lg:w-1/2 mx-auto items-start gap-4">
-        <ErrorAlert message={error.message} theme="failure" />
+        <ErrorAlert message={error.message} theme="failure" code={404} />
       </div>
     );
   },
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/invoices/$invoiceId")({
         <Spinner
           aria-label="Center-aligned spinner example"
           size={"xl"}
-          color={"info"}
+          color={"success"}
         />
       </div>
     );
@@ -90,41 +90,33 @@ function Invoice() {
   }, [invoice]);
 
   return (
-    <div className="flex flex-col w-full flex-grow sm:w-3/4 md:w-2/3 lg:w-1/2 mx-auto items-start gap-8">
-      {/* <Link
-        to="/"
-        from="/invoices/$invoiceId"
-        className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 text-xs px-4 rounded flex flex-row justify-between items-center gap-2"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={2}
-          stroke="currentColor"
-          className="size-5"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18"
-          />
-        </svg>
-        {lang === "fr" ? "Retour à la page d'accueil" : "Back to home"}
-      </Link> */}
-      <div className="flex flex-col gap-8 mt-32 w-full">
-        <div className="flex flex-col gap-3">
-          <h1 className="text-5xl font-bold text-slate-700">
+    <div className="flex flex-col w-full flex-grow sm:w-3/4 md:w-2/3 lg:w-1/2 mx-auto items-center justify-center gap-8">
+      <div>
+        <h1 className="font-extrabold text-slate-800">
+          {lang === "fr" ? "Bienvenue sur" : "Welcome to"}
+          <br />
+          MSM Payments
+        </h1>
+        <p className="description mt-2 text-lg sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+          {lang === "fr"
+            ? "Notre système de facturation vous permettant de régler vos factures en ligne en toute sécurité et simplicité."
+            : "Our billing system allowing you to pay your invoices online safely and easily."}
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-4 w-full p-4 lg:p-8 bg-slate-200 rounded-md">
+        <div className="flex flex-col gap-1">
+          <h5>
             {lang === "fr" ? "Facture " : "Invoice "}
             {invoice.InvoiceID}
-          </h1>
-          <h2 className="text-2xl text-slate-500">
+          </h5>
+          <p className="description text-sm sm:text-sm md:text-base lg:text-lg xl:text-xl">
             {lang === "fr" ? "Solde: " : "Balance: "}
             {new Intl.NumberFormat("fr-FR", {
               style: "currency",
               currency: "CAD",
             }).format(invoice.Balance / 100)}
-          </h2>
+          </p>
         </div>
         <div className="flex flex-col w-full">
           {invoice.Balance === 0 ? (
@@ -159,6 +151,7 @@ function Invoice() {
           ) : (
             <ErrorAlert
               theme="failure"
+              code={500}
               message={
                 lang === "fr"
                   ? "Impossible d'initialiser une tentative de paiement."

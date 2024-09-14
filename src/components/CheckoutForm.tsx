@@ -71,7 +71,7 @@ const CheckoutForm = (props: CheckoutFormProps) => {
       <PaymentElement />
       <button
         type="submit"
-        className={`hover:bg-blue-400 text-white font-bold py-2 px-4 rounded ${loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-500"}`}
+        className={`hover:bg-emerald-400 text-white font-bold py-2 px-4 rounded ${loading ? "bg-emerald-400 cursor-not-allowed" : "bg-emerald-500"}`}
         disabled={loading || !stripe}
       >
         {loading
