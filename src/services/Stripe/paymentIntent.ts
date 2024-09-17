@@ -1,3 +1,5 @@
+import { Invoice } from "../../types/types";
+
 const BASE_URL = "https://api.stripe.com/v1/payment_intents";
 const REQUEST_HEADERS = {
   "Content-Type": "x-www-form-urlencoded",
@@ -19,23 +21,11 @@ export const fetchPaymentIntent = async (paymentIntentId: string) => {
   return await res.json();
 };
 
-export const fetchPaymentIntentsByInvoiceId = async (invoiceId: string) => {
-  const res = await fetch(BASE_URL + "?description=" + invoiceId, {
-    headers: REQUEST_HEADERS,
-  });
-  return await res.json();
-};
-
 export const generatePaymentIntent = async (
-  invoiceId: number,
-  amount: number
+  invoice: Invoice
 ) => {
   const result = await fetch(
-    BASE_URL +
-      "?amount=" +
-      amount +
-      "&currency=cad&payment_method_types[]=card&description=" +
-      invoiceId,
+    BASE_URL + "?amount=" + invoice.Balance + "&currency=cad&payment_method_types[]=card&metadata[invoice_id]=" + invoice.InvoiceID + "&receipt_email=lefrancmathis@gmail.com",
     {
       method: "POST",
       headers: REQUEST_HEADERS,

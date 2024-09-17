@@ -12,11 +12,11 @@ import { Spinner } from "flowbite-react";
 import { useContext, useEffect, useState } from "react";
 import { fetchInvoice } from "../../services/invoice";
 import {
-  fetchPaymentIntentsByInvoiceId,
   generatePaymentIntent,
 } from "../../services/Stripe/paymentIntent";
 import { LanguageContext } from "../../contexts/LanguageContext";
 import ErrorAlert from "../../components/ErrorAlert";
+import { Invoice as InvoiceType } from "../../types/types";
 
 const stripePromise = loadStripe(
   "pk_test_51PsnWKBV4uK7jrIfvpQrJ9cWc69diKn2ed2lUQZwQM1AzAu4UuAgj225Q8bPwYpwffxxghxTXyhANhr3lcLqVScr00ajA8mqLK"
@@ -56,7 +56,7 @@ function Invoice() {
 
   const invoiceData = Route.useLoaderData();
 
-  const [invoice, setInvoice] = useState(invoiceData);
+  const [invoice, setInvoice] = useState<InvoiceType>(invoiceData);
   const [paymentIntent, setPaymentIntent] = useState<PaymentIntent | null>(
     null
   );
@@ -66,27 +66,13 @@ function Invoice() {
       return;
     }
 
-    fetchPaymentIntentsByInvoiceId(invoice.InvoiceID).then((paymentIntents) => {
-      if (paymentIntents.length > 0) {
-        const succeededPaymentIntent = paymentIntents.find(
-          (paymentIntent: PaymentIntent) => paymentIntent.status === "succeeded"
-        );
-
-        if (succeededPaymentIntent) {
-          setPaymentIntent(succeededPaymentIntent);
-        } else {
-          setPaymentIntent(paymentIntents[0]);
-        }
-      } else {
-        generatePaymentIntent(invoice.InvoiceID, invoice.Balance)
-          .then((paymentIntent) => {
-            setPaymentIntent(paymentIntent);
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      }
-    });
+    generatePaymentIntent(invoice)
+      .then((paymentIntent) => {
+        setPaymentIntent(paymentIntent);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, [invoice]);
 
   return (
